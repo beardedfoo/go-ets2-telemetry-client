@@ -9,8 +9,8 @@ import (
 	"os"
 	"time"
 
-	ets2		"github.com/cyleriggs/go-ets2-telemetry-client"
-	serial 	"github.com/goburrow/serial"
+	ets2 "github.com/cyleriggs/go-ets2-telemetry-client"
+	serial "github.com/goburrow/serial"
 )
 
 var baseUrl = ""
