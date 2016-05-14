@@ -1,5 +1,6 @@
 package ets2
 
+import "log"
 import "net/http"
 import "io/ioutil"
 import "encoding/json"
@@ -26,7 +27,7 @@ type Telemetry struct {
 		GameName               string
 		Time                   string
 		TimeScale              float32
-		NextRestStopTime       float32
+		NextRestStopTime       string
 		Version                string
 		TelemetryPluginVersion string
 	}
@@ -165,16 +166,30 @@ func NewClient(BaseUrl string) Client {
 }
 
 func (c Client) GetTelemetry() (t Telemetry, err error) {
-	resp, err := http.Get("http://" + c.BaseUrl + "/api/telemetry")
+	resp, err := http.Get(c.BaseUrl + "/api/ets2/telemetry")
 	if err != nil {
+		log.Fatalf("HTTP GET failed: %v", err)
 		return
+	}
+
+	if resp.StatusCode != 200 {
+		log.Fatalf("Bad status %v", resp.StatusCode)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		log.Fatalf("Failed to read http response: %v", err)
 		return
 	}
 
-	json.Unmarshal(body, &t)
+	t, err = parseTelemetry(body)
+	return
+}
+
+func parseTelemetry(jsonIn []byte) (t Telemetry, err error) {
+	err = json.Unmarshal(jsonIn, &t)
+	if err != nil {
+		log.Fatalf("Failed to parse: %v", jsonIn)
+	}
 	return
 }
