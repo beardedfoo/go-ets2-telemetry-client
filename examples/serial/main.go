@@ -16,11 +16,13 @@ import (
 var baseUrl = ""
 var updateFreq = 0
 var serialPort = ""
+var speedUnits = ""
 
 func init() {
 	flag.StringVar(&baseUrl, "baseUrl", "http://localhost:25555", "HTTP url for telemetry server")
 	flag.IntVar(&updateFreq, "updateFreq", 1000/24, "Update frequency in milliseconds")
 	flag.StringVar(&serialPort, "serialPort", "COM3", "A serial port to write updates to, one var at a time")
+	flag.StringVar(&speedUnits, "speedUnits", "kmh", "Interpret speed as [mph|kmh] (default: kmh)")
 }
 
 func main() {
@@ -60,7 +62,7 @@ func monitor(fh io.ReadWriteCloser, valueSep string, groupSep string) {
 			os.Exit(-1)
 		}
 		sendCmd(fh, fmt.Sprintf("rpm=%f%s", t.Truck.EngineRpm, valueSep))
-		sendCmd(fh, fmt.Sprintf("kmh=%f%s", t.Truck.Speed, valueSep))
+		sendCmd(fh, fmt.Sprintf("%s=%f%s", speedUnits, t.Truck.Speed, valueSep))
 		sendCmd(fh, fmt.Sprintf("fuel=%f%s", t.Truck.FuelCapacity/t.Truck.Fuel, valueSep))
 
 		time.Sleep(time.Duration(updateFreq * int(time.Millisecond)))
