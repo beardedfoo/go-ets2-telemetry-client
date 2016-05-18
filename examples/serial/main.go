@@ -63,7 +63,7 @@ func monitor(fh io.ReadWriteCloser, valueSep string, groupSep string) {
 		}
 		sendCmd(fh, fmt.Sprintf("rpm=%f%s", t.Truck.EngineRpm, valueSep))
 		sendCmd(fh, fmt.Sprintf("%s=%f%s", speedUnits, t.Truck.Speed, valueSep))
-		sendCmd(fh, fmt.Sprintf("fuel=%f%s", t.Truck.FuelCapacity/t.Truck.Fuel, valueSep))
+		sendCmd(fh, fmt.Sprintf("fuel=%f%s", 100 * (t.Truck.Fuel/t.Truck.FuelCapacity), valueSep))
 
 		time.Sleep(time.Duration(updateFreq * int(time.Millisecond)))
 
